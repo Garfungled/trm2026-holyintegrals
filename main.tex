@@ -1,0 +1,431 @@
+\documentclass{article}
+
+\renewcommand{\thesection}{\Roman{section}} 
+\renewcommand{\thesubsection}{\thesection.\Roman{subsection}}
+\renewcommand{\thesubsubsection}{\thesection.\thesubsection.\Roman{subsubsection}}
+\newcommand{\horiline}{\noindent\rule{16cm}{0.4pt}}
+
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{enumitem}
+\usepackage{amsmath} 
+\usepackage{amsfonts}
+\usepackage{mathtools} 
+\usepackage{cancel}
+\usepackage{tikz}
+\usepackage{tkz-euclide}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{bm}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{csquotes}
+\usepackage{tocloft}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{amsmath,mleftright}
+\usepackage{xparse}
+\usepackage{pgfplots}
+\usepgfplotslibrary{fillbetween}    
+\pgfplotsset{compat=1.8, width=10cm}
+\usetikzlibrary{backgrounds,
+                hobby}
+
+\addtolength{\cftsecnumwidth}{10pt}
+\setlength{\cftsubsecnumwidth}{30pt}
+\setlength{\cftsubsubsecnumwidth}{40pt}
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\NewDocumentCommand{\evalat}{sO{\big}mm}{%
+  \IfBooleanTF{#1}
+   {\mleft. #3 \mright|^{#4}}
+   {#3#2|^{#4}}%
+}
+
+\newcommand{\Li}[1]{\operatorname{Li_2}{\left(#1\right)}}
+
+\usepackage{titletoc}% http://ctan.org/pkg/titletoc
+\titlecontents*{chapter}% <section-type>
+  [0pt]% <left>
+  {}% <above-code>
+  {\bfseries\chaptername\ \thecontentslabel\quad}% <numbered-entry-format>
+  {}% <numberless-entry-format>
+  {\bfseries\hfill\contentspage}% <filler-page-format>
+
+\title{Holy Integrals}
+\author{Zachary Medjamia}
+\date{2026}
+
+\begin{document}
+
+\maketitle
+
+\section*{Introduction}
+
+This essay is devoted toward some of my favorite integral problems I've come across in the past (through books, forums, or self discovery). I not only want to document them here but also provide some detailed insight and understanding behind each integral (not just their solutions). There's a few initial steps that we'll frequently use on every integral. We'll always start by plugging them directly into a calculator, I typically start with \href{https://www.integral-calculator.com/}{Integral-Calculator} and or \href{https://www.wolframalpha.com/}{WolframAlpha}. We'll also use an Inverse Symbolic Calculator (specifically RIES) to try and find a closed form solution using the numerical value of the integral. Also, feel free to try these integrals yourself before reading!
+
+\section{$I_{0}$: Michael}
+$$I_{0} = \int_{1}^{\sqrt{2}}{\frac{\arctan{\sqrt{2 - x^2}}}{1+x^2}dx}$$
+
+Using all the previously mentioned methods we've arrived at nothing (this is good!). Using the approximation numerical value of the integral: $0.1028083791780...$ (for the sake of intrigue I'll be using 100 digits), the RIES program returns
+$$
+\frac{(\arctan{1})^2}{6} = \frac{\left( \frac{\pi}{4} \right)^2}{6} = \frac{\pi^2}{96}
+$$
+as an exact match. Occasionally, this process will allow us to possibly contemplate our next steps in solving. 
+
+We can break up the integral by noticing $\arctan{\sqrt{2-x^2}} = \int_{0}^{\sqrt{2-x^2}}{\frac{1}{1+y^2}}dy$ as well as switching the order of integration while respecting the bounds to set up an interesting step,
+\begin{align*}
+\int_{1}^{\sqrt{2}}{\frac{\arctan{\sqrt{2 - x^2}}}{1+x^2}dx} &= \int_{1}^{\sqrt{2}}{\int_{0}^{\sqrt{2-x^2}}{\frac{1}{(1+x^2)(1+y^2)}dy}dx}\\ &= \int_{0}^{1}{\int_{1}^{\sqrt{2-y^2}}{\frac{1}{(1+x^2)(1+y^2)}dx}dy}
+\end{align*}
+
+Evaluating with respect to $x$ first,
+\begin{align*}
+\int_{0}^{1}{\frac{1}{1+y^2}dy}\int_{1}^{\sqrt{2-y^2}}{\frac{1}{(1+x^2)}dx} &= \int_{0}^{1}{\frac{1}{1+y^2} \left( \arctan{\sqrt{2-y^2} - \arctan{1}} \right) dy} \\
+&= \int_{0}^{1}{\frac{\arctan{\sqrt{2-y^2}}}{1+y^2}dy} -\frac{\pi}{4}\int_{0}^{1}{\frac{1}{1+y^2}dy} \\ 
+&= \int_{0}^{1}{\frac{\arctan{\sqrt{2-y^2}}}{1+y^2}dy} - \frac{\pi^2}{16}
+\end{align*}
+
+If we use the fact that the integrals $[0, \sqrt{2}] = [0, 1] + [1, \sqrt{2}] \implies [0, 1] = [0, \sqrt{2}] - [1, \sqrt{2}]$ (and also since they're definite integrals, the variable symbol doesn't matter, so I'll change the $y$ to $x$),
+
+\begin{align*}
+    \int_{1}^{\sqrt{2}}{\frac{\arctan{\sqrt{2 - x^2}}}{1+x^2}dx} &= \int_{0}^{\sqrt{2}}{\frac{\arctan{\sqrt{2 - x^2}}}{1+x^2}dx} - \int_{1}^{\sqrt{2}}{\frac{\arctan{\sqrt{2 - x^2}}}{1+x^2}dx} - \frac{\pi^2}{16} \\ 
+    &= \frac{1}{2}\int_{0}^{\sqrt{2}}{\frac{\arctan{\sqrt{2 - x^2}}}{1+x^2}dx} - \frac{\pi^2}{32}
+\end{align*}
+
+Now that we've got the integral under nicer bounds, let's properly evaluate it.
+
+\subsection{Feynman's technique}
+
+Sometimes referred to as \textit{Differentiation Under the Integral Sign}, this particular technique uses the fact that given some function $F(t) = \int_{a}^{b}{f(t, x)dx}$,
+$$
+F^\prime(t) = \frac{\partial}{\partial t}\int_{a}^{b}{f(t, x)dx} = \int_{a}^{b} \left( \frac{\partial}{\partial t} f(t, x)\right)dx.
+$$
+
+Note: $\partial / \partial t$ denotes the deriative operator for multivariate functions.
+\\\\
+We'll often use this technique if we have some idea in our mind such as \textit{"what if there wasn't this here"} or \textit{"what if there was a function there"}. In this case, I'd like to get rid of the $\arctan$ in our expression. Looking at a few different parameterizations, $\arctan(t \sqrt{2-x^2})$ and $\arctan(\sqrt{2-tx^2})$ do the job, though the former reduces nicer so that's the one we'll go with.
+
+So, using $F(t) = \int_{0}^{\sqrt{2}}{\frac{\arctan{(t\sqrt{2 - x^2})}}{1 + x^2}dx}$,
+
+\begin{align*}
+    F^\prime(t) &= \frac{\partial}{\partial t}\int_{0}^{\sqrt{2}}{\frac{\arctan{(t\sqrt{2 - x^2})}}{1 + x^2}dx} \\ 
+    &= \int_{0}^{\sqrt{2}}{\frac{\partial}{\partial t} \left[\frac{\arctan{(t\sqrt{2 - x^2})}}{1 + x^2}\right]dx} \\
+    &= \int_{0}^{\sqrt{2}}{\frac{\sqrt{2-x^2}}{(x^2 + 1)((2-x^2)t^2 + 1)}dx}
+\end{align*}
+
+Let $x = \sqrt{2}\sin{\theta} \implies dx = \sqrt{2}\cos{\theta}d\theta$ with bounds $[0, \pi/2]$,
+
+\begin{align*}
+    F^\prime(t) &= \int_{0}^{\pi/2}{\frac{\sqrt{2}\cos{\theta}\sqrt{2 - (\sqrt{2}\sin{\theta})^2}}{((\sqrt{2}\sin{\theta})^2 + 1)((2 - (\sqrt{2}\sin{\theta})^2)t^2 + 1)}d\theta} \\
+    &= \int_{0}^{\pi/2}{\frac{2\cos^2{\theta}}{(2\sin^2{\theta} + 1)(1 + 2t^2 \cos^2{\theta})}d\theta} \\ 
+    &= \evalat*{\left(\frac{\sqrt{6t^2 + 3}\arctan{(\sqrt{3}\tan{\theta})} - \arctan{\left( \frac{\tan{\theta}}{2t^2 + 1} \right)}}{\sqrt{2t^2 + 1}(3t^2 + 1)}\right)}{\theta = \pi/2}_{\theta = 0} \\
+    &= \frac{\pi(\sqrt{6t^2 +3} - 1)}{2\sqrt{2t^2 + 1}(3t^2 + 1)}
+\end{align*}
+
+Feel free to do the last integral yourself. Finally, to find $F(t)$, we need to integrate $F'(t)$ with respect to $t$.
+
+\begin{align*}
+    F(t) &= \frac{\pi}{2}\int{\frac{\sqrt{6t^2 +3} - 1}{\sqrt{2t^2 + 1}(3t^2 + 1)}dt}
+\end{align*}
+
+Choosing $t = \frac{\tan u}{\sqrt{2}} \implies dt = \frac{\sec^2{u}}{\sqrt{2}}du$ (which makes $F(t) \implies F(t(u))$ but this is inferred),
+
+\begin{align*}
+    \frac{\pi}{2}\int{\frac{\sqrt{6t^2 +3} - 1}{\sqrt{2t^2 + 1}(3t^2 + 1)}dt} &= \frac{\pi}{2}\int{\frac{\sqrt{6\left(\frac{\tan u}{\sqrt{2}}\right)^2 +3} - 1}{\sqrt{2\left(\frac{\tan u}{\sqrt{2}}\right)^2 + 1}\left(3\left(\frac{\tan u}{\sqrt{2}}\right)^2 + 1\right)}\frac{\sec^2{u}}{\sqrt{2}}du} \\ 
+    &= \frac{\pi}{2} \int{\frac{\sec{u} (\sqrt{3}\sec{u} - 1)}{3\tan^2{u} + 2}du} \\
+    &= \frac{\pi}{2}\left( \arctan{\left(\frac{\sqrt{3}\tan{u}}{\sqrt{2}}\right) - \arctan{\left( \frac{\sin{u}}{\sqrt{2}} \right)}} \right) + C \\ 
+    &= \frac{\pi}{4}\arctan{\left( \frac{t(\sqrt{6t^2 + 3} - 1)}{t^2\sqrt{3} + \sqrt{2t^2 + 1}} \right)} + C
+\end{align*}
+
+Now, we have our intergral (since the integral is $0$ when $t = 0$ then $F(0) = 0 \implies C = 0$),
+$$
+F(t) = \int_{0}^{\sqrt{2}}{\frac{\arctan{(t\sqrt{2 - x^2})}}{1 + x^2}dx} = \frac{\pi}{4}\arctan{\left( \frac{t(\sqrt{6t^2 + 3} - 1)}{t^2\sqrt{3} + \sqrt{2t^2 + 1}} \right)}.
+$$
+
+Our original integral occurs when $t = 1$, or, $F(1)$. 
+
+\begin{align*}
+    F(1) &= \int_{0}^{\sqrt{2}}{\frac{\arctan{(\sqrt{2 - x^2})}}{1 + x^2}dx} \\
+    &= \frac{\pi}{4}\arctan{\left( \frac{(\sqrt{6 + 3} - 1)}{\sqrt{3} + \sqrt{2 + 1}} \right)} = \frac{\pi}{4} \cdot \frac{\pi}{3} = \frac{\pi^2}{12}\\
+\end{align*}
+
+Substituting this value into our original yields, 
+
+\begin{align*}
+   \int_{1}^{\sqrt{2}}{\frac{\arctan{\sqrt{2 - x^2}}}{1+x^2}dx} &= \frac{1}{2}\int_{0}^{\sqrt{2}}{\frac{\arctan{\sqrt{2 - x^2}}}{1+x^2}dx} - \frac{\pi^2}{32} \\
+   &= \frac{\pi^2}{24} - \frac{\pi^2}{32} = \frac{\pi^2}{96}\\
+\end{align*}
+
+So now, we've finally proved that,
+$$\boxed{\int_{1}^{\sqrt{2}}{\frac{\arctan{\sqrt{2 - x^2}}}{1+x^2}dx} = \frac{\pi^2}{96}}$$
+
+
+\section{$I_{1}:$ Ophanim}
+$$
+I_{1} = \int_{0}^{\infty}{\frac{\arctan^2{x}}{x^2 + 9}dx}
+$$
+
+All methods were unsuccessful, including RIES with the approximation $0.7355031...$ with 100 digits of percision and $80033943411216$ expression searched. So, we'll get right to the evaluation.
+
+Interestingly enough, 
+\begin{align*}
+    \arctan{(xy)} = \int{\frac{x}{1+y^2 x^2}dy} &\implies \arctan{x} = \int_{0}^{1}{\frac{x}{1+y^2 x^2}dy}\\ &\implies \arctan^2{x} = \int_{0}^{1}{\int_{0}^{1}{\frac{x^2}{(1+y^2 x^2)(1+z^2 x^2)}dydz}}
+\end{align*}
+
+So,
+
+\begin{align*}
+    \int_{0}^{\infty}{\frac{\arctan^2{x}}{x^2 + 9}dx} &= \int_{0}^{\infty}\frac{1}{x^2 + 9} \left( \int_{0}^{1}{\int_{0}^{1}{\frac{x^2}{(1+y^2 x^2)(1+z^2 x^2)}dydz}} \right)dx \\ 
+    &= \int_{0}^{\infty}{\int_{0}^{1}{\int_{0}^{1}{\frac{x^2}{(9+x^2)(1+y^2x^2)(1+z^2x^2)}dydzdx}}}
+\end{align*}
+
+If you're familiar with multivariable calculus then you know \textit{Fubini's theorem} which essentially gives you validation that you can swap the order of integration with multiple iterated integrals. \textit{Tonelli’s theorem} is rather similar, except we need the condition that the integrand (the function being integrated) is non-negative (which is clearly the case since $x^2$, $z^2$, $y^2$ are all $>0$) and continous along the bounds $(0, \infty) \times [0, 1]^2$. Analyzing the function across these bounds shows that it is continous, additionally, we could look at the graph of the function. Thus,
+
+\begin{align*}
+    \int_{0}^{\infty}{\frac{\arctan^2{x}}{x^2 + 9}dx} &= \int_{0}^{1}{\int_{0}^{1}{\int_{0}^{\infty}{\frac{x^2}{(9+x^2)(1+y^2x^2)(1+z^2x^2)}dxdydz}}}
+\end{align*}
+
+The integrand is very nearly in in the form $\frac{x^2}{(x^2 + A^2)(x^2 + B^2)(x^2 + C^2)}$ which would work nicely with partial fraction decomposition. We can easily turn it into such by,
+
+\begin{align*}
+    \frac{x^2}{(9+x^2)(1+y^2x^2)(1+z^2x^2)} &= \frac{1}{y^2 z^2}\cdot\frac{x^2}{(x^2 + 9)(x^2 + \frac{1}{y^2})(x^2 + \frac{1}{z^2})} \\ 
+    &= (B^2 C^2)\cdot\frac{x^2}{(x^2 + A^2)(x^2 + B^2)(x^2 + C^2)}
+\end{align*}
+
+where $A = 3$, $B = \frac{1}{y}$, $C = \frac{1}{z}$. I see a pretty nice generalization here for our integral, specifically,
+
+$$
+I_{1}(t) = \int_{0}^{\infty}{\frac{\arctan^2{x}}{x^2 + t^2}dx}.
+$$
+
+Which would make $A = t$. Continuing with the decomposition,
+
+\begin{align*}
+    \frac{x^2}{(x^2 + A^2)(x^2 + B^2)(x^2 + C^2)} = &-\frac{A^2}{(A^2 - B^2)(A^2 - C^2)(A^2 + x^2)} \\&+ \frac{B^2}{(A^2 - B^2)(B^2 - C^2)(B^2 + x^2)} \\&+ \frac{C^2}{(A^2 - C^2)(C^2 - B^2)(C^2 + x^2)}
+\end{align*}
+
+Which makes the integral,
+
+\begin{align*}
+    \int_{0}^{\infty}{\frac{x^2}{(t^2+x^2)(1+y^2x^2)(1+z^2x^2)}} = B^2 C^2\Bigg( \Bigg. &-\frac{A^2}{(A^2 - B^2)(A^2 - C^2)}\int_{0}^{\infty}{\frac{1}{(A^2 + x^2)}dx}\\& + \frac{B^2}{(A^2 - B^2)(B^2 - C^2)}\int_{0}^{\infty}{\frac{1}{(B^2 + x^2)}dx}\\ &+ \frac{C^2}{(A^2 - C^2)(C^2 - B^2)}\int_{0}^{\infty}{\frac{1}{(C^2 + x^2)}dx} \Bigg. \Bigg)
+\end{align*}
+
+For any $u \in \mathbb{R}$, $\int_{0}^{\infty}{\frac{1}{x^2 + u^2}dx} = \evalat*{\left( \frac{\arctan{x/u}}{u} \right)}{\infty}_{0} = \frac{\pi}{2u}$, so,
+
+\begin{align*}
+    \int_{0}^{\infty}{\frac{x^2}{(t^2 + x^2)(1+y^2x^2)(1+z^2x^2)}} &= \frac{B^2 C^2\pi}{2(A + B)(B + C)(C + A)} \\ 
+    &= \frac{\pi}{2(1+ty)(1+tz)(y+z)}
+\end{align*}
+
+Substituting back into our original iterated integral ($z = \frac{1}{t}$ is removable),
+
+\begin{align*}
+    I_1(t) &= \frac{\pi}{2}\int_{0}^{1}{\int_{0}^{1}{\frac{1}{(1+ty)(1+tz)(y+z)}dydz}} \\ 
+    &= \frac{\pi}{2}\left( \int_{0}^{1}{\frac{1}{1 + tz}\left( \int_{0}^{1}{\frac{1}{(1+ty)(y+z)}dy} \right)dz} \right) \\
+    &= \frac{\pi}{2}\int_{0}^{1}{\frac{1}{(1+tz)(1-tz)} \ln\left(\frac{1+z}{z(1+t)}\right)dz}
+\end{align*}
+
+Typical integral calculators can solve this. However, they yield quite the answer... 
+\begin{align*}
+    -\frac{1}{2t}\Bigg( \Bigg. &\Li{\frac{2t}{t+1}} - \Li{\frac{t}{t+1}} + \ln^2{(t+1)} + \ln{(t+1)}(-\ln{(|t-1|)} - 2\ln 2) \\& - \Li{\frac{2t}{t-1}} + \Li{\frac{t}{t-1}} - \Li{t} + \Li{-t} + 2\ln 2 \ln{(t-1)} \Bigg. \Bigg)
+\end{align*}
+
+($\Li{t}$ will be defined in a moment) but I believe we can do better than this. Let $z = \frac{1-w}{1+w} \implies dz = -\frac{2}{(1+w)^2}dw$ and let $n = \frac{t-1}{t+1}$.
+
+\begin{align*}
+    I_1{(t)} &= \frac{\pi}{2} \int_{0}^{1}{\frac{\ln{\left( \frac{1-n}{1-w} \right)}}{\frac{(t+1)^2 (w-n)(1-nw)}{(1+w)^2}} \left( -\frac{2}{(1+w)^2} \right)dw} \\
+    &= \frac{\pi(1-n^2)}{4t} \int_{0}^{1}{\frac{\ln{(1-n)} - \ln{(1-w)}}{(w-n)(1-nw)}dw}
+\end{align*}
+
+Let's do a bit of Feynman's, let $F(n) = (1-n^2)\int_{0}^{1}{\frac{\ln{(1-n)} - \ln{(1-w)}}{(w-n)(1-nw)}dw}$, we can break it up as
+
+\begin{align*}
+    F(n) &= (1-n^2) \int_{0}^{1}{ \left( \frac{1}{w-n} + \frac{n}{1-nw} \right) (\ln{(1-n)} - \ln{(1-w)}) dw} \\
+\end{align*}
+
+Let $w = \frac{n + u}{1+nu} \implies dw = \frac{1-n^2}{(1+nu)^2} du$,
+
+\begin{align*}
+    F(n) &= \int_{-n}^{1}{\frac{\ln(1 + nu) - \ln(1-u)}{u}du} \\ 
+    \implies F'(n) &= \int_{-n}^{1}{\frac{1}{1 + nu}du} \\
+    &= \evalat*{\frac{\ln(|nu + 1|)}{n}}{1}_{-n} = -\frac{2\ln(1-n)}{n} \\
+    \implies F(n) &= 2\left(-\int{\frac{\ln(1-n)}{n} dn}\right)
+\end{align*}
+
+\subsection{Dilogarithm}
+
+The \textbf{polylogarithm} is a special function, denoted as $\text{Li}_{s}(z)$ (for $s\in\mathbb{Z}$ and $z\in\mathbb{C}$), that appears quite frequently in mathematics. It's defined as,
+
+$$
+\text{Li}_{s}(z) = \sum_{k=1}^{\infty}{\frac{z^k}{k^s}} = \int_{0}^{z}{\frac{\text{Li}_{(s-1)}(t)}{t}dt}
+$$
+
+Notice that for $s = 1$, $\text{Li}_{1}(z) = -\ln(1-z)$. We can then define $\Li{z}$ as
+
+$$
+\Li{z} = -\int_{0}^{z}{\frac{\ln(1-t)}{t}dt}.
+$$
+
+This function is more commonly known as the \textbf{dilogrithm}. This integral is unsolvable, or, nonelementary (can't be expressed using a finite amount of elementary operation). However, there are some special values of this function as we will come to see. So,
+
+\begin{align*}
+    F(n) &= 2\Li{n} + C.
+\end{align*}
+
+Clearly if $k = 0$ then $-\int_{0}^{0}{\frac{\ln(1-u)}{u}du} = 0 \implies \Li{0} = 0$, so $C = F(0)$. Recall the definition of a polylogarithm,
+
+\begin{align*}
+    F(0) &= -\int_{0}^{1}{\frac{\ln(1-u)}{u}du} \\
+    &= \sum_{k=1}^{\infty}{\frac{1}{k^2}} = \frac{\pi^2}{6}
+\end{align*}
+
+The last step is a famous result of the Basel Problem. Notice that $-\int_{0}^{1}{\frac{\ln(1-u)}{u}du} = \Li{1} \implies \Li{1} = \pi^2/6$. So,
+
+\begin{align*}
+    F(n) &= 2\Li{n} + \frac{\pi^2}{6} \\
+    \implies I_1(t) &= \frac{\pi}{4t} \left( 2\Li{\frac{t-1}{t+1}} + \frac{\pi^2}{6} \right) \\
+\end{align*}
+
+Our original integral is for $t = 3$, so
+\begin{align*}
+    I_1(3) &= \int_{0}^{\infty}{\frac{\arctan^2{x}}{x^2 + 9}dx} \\
+    &= \frac{\pi}{12} \left( 2\Li{\frac{1}{2}} + \frac{\pi^2}{6} \right).
+\end{align*}
+
+Cool enough, we can reduce this further by finding $\Li{\frac{1}{2}}$. It's rather straightforward so I'll showcase it here:
+\begin{align*}
+    \frac{d}{dx}\left[\Li{1 - x}\right] &= \frac{\ln x}{1-x} \\ 
+    \evalat*{\Li{1 - x}}{y}_{0} &= \int_{0}^{y}{\frac{\ln x}{1-x}dx} \\ 
+    \Li{1-y} - \Li{1} &= \evalat*{\left(-\ln(1-x)\ln{x}\right)}{y}_{0} + \int_{0}^{y}{\frac{\ln(1-x)}{x}dx} \\
+    \Li{1-y} &= \frac{\pi^2}{6}-\ln(1-y)\ln{y} - \Li{y} \\
+    \Li{\frac{1}{2}} &= \frac{\pi^2}{12} - \frac{1}{2}\ln^2\left(\frac{1}{2}\right) \\
+    &= \frac{\pi^2}{12} - \frac{1}{2}\ln^2(2)
+\end{align*}
+
+So, we have
+
+\begin{align*}
+    \boxed{\int_{0}^{\infty}{\frac{\arctan^2{x}}{x^2 + 9}dx} = \frac{\pi^3 - 3\pi\ln^2(2)}{36}}
+\end{align*}
+
+\section{$I_2$: Gabriel}
+$$
+\int_{-1}^{1}{\frac{\arcsin{x} + 1}{x\sqrt{1-x^4}} \ln\left( \frac{(x^2 + 1)^{3/2} + x^3}{(x^2 + 1)^{3/2} - x^3} \right)dx}
+$$
+
+REIS yields $\pi\arcsin(3 - \sqrt{7})$ as an answer from the numerical value of $1.13760379218104...$ This will be good motivation later on. First let's break this into two integrals from the numerator being $\arcsin{x} + 1$,
+
+$$
+I_{2} = \int_{-1}^{1}{\frac{\arcsin{x}}{x\sqrt{1-x^4}} \ln\left( \frac{(x^2 + 1)^{3/2} + x^3}{(x^2 + 1)^{3/2} - x^3} \right)dx} + \int_{-1}^{1}{\frac{1}{x\sqrt{1-x^4}} \ln\left( \frac{(x^2 + 1)^{3/2} + x^3}{(x^2 + 1)^{3/2} - x^3} \right)dx}
+$$
+
+The first integral is odd, so it's zero across the bounds $[-1, 1]$. So the integral is now,
+
+$$I_{2} = \int_{-1}^{1}{\frac{1}{x\sqrt{1-x^4}} \ln\left( \frac{(x^2 + 1)^{3/2} + x^3}{(x^2 + 1)^{3/2} - x^3} \right)dx}.$$
+
+Let $x = \tan{t} \implies dx = \sec^2{t}dt$ and $[-1, 1] \to [\pi/4, -\pi/4]$,
+\begin{align*}
+    I_{2} &= \int_{-\pi/4}^{\pi/4}{\frac{1}{\tan{t}\sqrt{1-(\tan{t})^4}} \ln\left( \frac{((\tan{t})^2 + 1)^{3/2} + (\tan{t})^3}{((\tan{t})^2 + 1)^{3/2} - (\tan{t})^3} \right)\sec^2{t}dt} \\
+    &= \int_{-\pi/4}^{\pi/4}{\frac{\cos{t}}{\sin{t}\sqrt{1 - 2\sin^2{t}}} \ln\left( \frac{1 + \sin^3 t}{1 - \sin^3 t} \right) dt} \\
+    &= \int_{-\pi/4}^{\pi/4}{\frac{\cos{t}}{\sin{t}\sqrt{1 - 2\sin^2{t}}} \ln\left( 1 + \sin^3 t \right) dt} - \int_{-\pi/4}^{\pi/4}{\frac{\cos{t}}{\sin{t}\sqrt{1 - 2\sin^2{t}}} \ln\left( 1 - \sin^3 t \right) dt}\\
+    &= 2\int_{-\pi/4}^{\pi/4}{\frac{\cos{t}}{\sin{t}\sqrt{1 - 2\sin^2{t}}} \ln\left( 1 + \sin^3 t \right) dt}
+\end{align*}
+
+Let $u = \sin(t) \implies du = \cos(t)dt$ and $[-\pi/4, \pi/4] \to [-1/\sqrt{2}, 1/\sqrt{2}]$, then, after simplifying, let $u = \sin(w)/\sqrt{2} \implies du = (\cos(w)/\sqrt{2}) dw$ and $[-1/\sqrt{2}, 1/\sqrt{2}] \to [-\pi/2, \pi/2]$
+
+\begin{align*}
+    I_{2} &= 2\int_{-1/\sqrt{2}}^{1/\sqrt{2}}{\frac{\ln\left( 1 + u^3 \right)}{u\sqrt{1 - 2u^2}}du} = 2\int_{-\pi/2}^{\pi/2}{\frac{\ln\left( 1 + \left(\frac{\sin w}{\sqrt{2}}\right)^3 \right)}{\sin{w}}dw}
+\end{align*}
+
+If we can split $\left(\frac{\sin w}{\sqrt{2}}\right)^3$ into three products, then we can split the integral into three parts. There are no ifs in this case, this is exactly what we are going to do. Using roots of unity, $1 + x^3$ has zeros at $x = -1, e^{\frac{\pi i}{3}}, e^{-\frac{\pi i}{3}}$, so,
+
+\begin{align*}
+    I_{2} &= 2\left( \int_{-\pi/2}^{\pi/2}{\frac{\ln\left( 1 + \frac{\sin{w}}{\sqrt{2}} \right)}{\sin{w}}dw} + \int_{-\pi/2}^{\pi/2}{\frac{\ln\left( e^{\frac{\pi i}{3}} + \frac{\sin{w}}{\sqrt{2}} \right)}{\sin{w}}dw} + \int_{-\pi/2}^{\pi/2}{\frac{\ln\left( e^{\frac{-\pi i}{3}} + \frac{\sin{w}}{\sqrt{2}} \right)}{\sin{w}}dw} \right) \\
+    &= 2\left( \int_{-\pi/2}^{\pi/2}{\frac{\ln\left( 1 + \frac{1}{\sqrt{2}}\sin{w} \right)}{\sin{w}}dw} + \int_{-\pi/2}^{\pi/2}{\frac{\ln\left( 1 - \frac{e^{\frac{\pi i}{3}}}{\sqrt{2}}\sin{w} \right)}{\sin{w}}dw} + \int_{-\pi/2}^{\pi/2}{\frac{\ln\left( 1 - \frac{e^{\frac{-\pi i}{3}}}{\sqrt{2}}\sin{w} \right)}{\sin{w}}dw} \right) \\
+\end{align*}
+
+We'll solve the general case,
+
+\begin{align*}
+    F(b) &= \int_{-\pi/2}^{\pi/2}{\frac{\ln\left( 1 + b\sin{w} \right)}{\sin{w}}dw} \\
+    \implies F^\prime(b) &= \int_{-\pi/2}^{\pi/2}{\frac{1}{b\sin w + 1}dw} \\
+\end{align*}
+
+To solve this integral, we'll use Weierstrass Substitution (or Tangent half-angle substitution). First, let $t = \tan{\frac{w}{2}}$ which then makes $\sin{w} = \frac{2t}{1+t^2}$, $\cos{w} = \frac{1-t^2}{1+t^2}$, and $dw = \frac{2 dt}{1+t^2}$. The bounds are thus $[\pi/2, -\pi/2] \to [1, -1]$. Note, we can only use Weierstrass Substitution when we have a rational function in terms of trigonometric functions. 
+
+\begin{align*}
+    F^\prime(b) &= \int_{-1}^{1}{\frac{1}{b\left( \frac{2t}{1+t^2} \right) + 1} \left( \frac{2}{1+t^2} \right)dt} \\
+    &= \int_{-1}^{1}{\frac{2}{t^2 + 2bt - 1}dt} = 2\int_{-1}^{1}{\frac{1}{(t + b)^2 + (\sqrt{1 - b^2})} dt} \\
+    &= \frac{2}{\sqrt{1-b^2}}\evalat*{\left(\arctan\left(\frac{t + b}{\sqrt{1 - b^2}} \right)\right)}{1}_{-1} \\
+    &= \frac{2}{\sqrt{1 - b^2}}\left( \arctan\left(\frac{b + 1}{\sqrt{1 - b^2}} \right) - \arctan\left(\frac{b - 1}{\sqrt{1 - b^2}} \right) \right)
+\end{align*}
+
+Note that $\frac{b + 1}{\sqrt{1 - b^2}} = -\left(\frac{b - 1}{\sqrt{1 - b^2}} \right)^{-1}$ and $\arctan{x} + \arctan{\frac{x}{2}} = \frac{\pi}{2}$ for $x > 0$. So,
+
+\begin{align*}
+    F^\prime(b) &= \frac{2}{\sqrt{1-b^2}}\cdot \frac{\pi}{2} = \frac{\pi}{\sqrt{1 - b^2}} \\
+    \implies F(b) &= \pi\int{\frac{1}{\sqrt{1 - b^2}}db} \\
+    &= \pi\arcsin{b} + C
+\end{align*}
+
+When $F(0) = \int_{-\pi/2}^{\pi/2}{0dw} = 0 \implies C = 0$. So,
+$$
+\int_{-\pi/2}^{\pi/2}{\frac{\ln\left( 1 + b\sin{w} \right)}{\sin{w}}dw} = \pi\arcsin{b}.
+$$
+
+Using this result, we turn back to $I_2$,
+
+\begin{align*}
+    I_{2} &= 2\left( \int_{-\pi/2}^{\pi/2}{\frac{\ln\left( 1 + \frac{1}{\sqrt{2}}\sin{w} \right)}{\sin{w}}dw} + \int_{-\pi/2}^{\pi/2}{\frac{\ln\left( 1 - \frac{e^{\frac{\pi i}{3}}}{\sqrt{2}}\sin{w} \right)}{\sin{w}}dw} + \int_{-\pi/2}^{\pi/2}{\frac{\ln\left( 1 - \frac{e^{\frac{-\pi i}{3}}}{\sqrt{2}}\sin{w} \right)}{\sin{w}}dw} \right) \\
+    &= 2\pi\arcsin{\frac{1}{\sqrt{2}}} - 2\pi\arcsin{\frac{e^{-\frac{\pi i}{3}}}{\sqrt{2}}} - 2\pi\arcsin{\frac{e^{\frac{\pi i}{3}}}{\sqrt{2}}} \\
+    &= \frac{\pi^2}{2} -2\pi\left( \arcsin{\frac{e^{-\frac{\pi i}{3}}}{\sqrt{2}}} - \arcsin{\frac{e^{\frac{\pi i}{3}}}{\sqrt{2}}} \right)
+\end{align*}
+
+This may seem to be a complete solution at first, but remember our solution from RIES. We will continue with the evaluation. For some $x, y \in \mathbb{C}$ such that $|x^2 + y^2| \leq 1$, we have $\arcsin{x} + \arcsin{y} = \arcsin{\left( x\sqrt{1 - y^2} +y\sqrt{1 - x^2} \right)}$. So we can write,
+\begin{align*}
+    I_{2} &= \frac{\pi^2}{2} -2\pi\left( \arcsin{\frac{e^{-\frac{\pi i}{3}}}{\sqrt{2}}} - \arcsin{\frac{e^{\frac{\pi i}{3}}}{\sqrt{2}}} \right) \\
+    &= \frac{\pi^2}{2} - 2\pi\arcsin\left( \frac{\sqrt{\sqrt{28} + 5}-\sqrt{3}\sqrt{\sqrt{28} - 5}}{4} \right)
+\end{align*}
+
+We can attempt to simplify the expression inside $\arcsin$. Let's try and get it in the form of $\sqrt{x + \sqrt{y}}$.
+
+\begin{align*}
+    \sqrt{x + \sqrt{y}} &= \frac{\sqrt{\sqrt{28} + 5}-\sqrt{3}\sqrt{\sqrt{28} - 5}}{4} \\
+    x + \sqrt{y} &= \frac{\left(\sqrt{\sqrt{28} + 5}-\sqrt{3}\sqrt{\sqrt{28} - 5}\right)^2}{2} \\
+    &= \frac{\sqrt{28} - 4}{4} \\ 
+    \implies  \frac{1}{2}\sqrt{\sqrt{28}-4} &= \frac{\sqrt{\sqrt{28} + 5}-\sqrt{3}\sqrt{\sqrt{28} - 5}}{4}
+\end{align*}
+
+Next, as a corollary to the earlier $\arcsin$ identity, it can be shown that $2\arcsin{x} = \arcsin{\sqrt{2x\sqrt{1-x^2}}}$, so,
+
+\begin{align*}
+    I_{2} &= \pi \left( \frac{\pi}{2} - 2\arcsin\left( \frac{1}{2}\sqrt{\sqrt{28}-4} \right)\right) \\
+    &= \pi \left( \frac{\pi}{2} - \arcsin\left(\sqrt{\sqrt{28}-4}\sqrt{1 - \left( \sqrt{\sqrt{28}-4}\right)^2}  \right) \right) \\ 
+    &= \pi \left( \frac{\pi}{2} - \arcsin\left( \frac{\sqrt{12\sqrt{28} - 60}}{2} \right) \right)
+\end{align*}
+
+We'll once again use the $\arcsin$ identity but with $\pi / 2 = \arcsin{1}$, so, 
+\begin{align*}
+    I_{2} &= \pi \left( \arcsin{1} -  \arcsin\left( \frac{\sqrt{12\sqrt{28} - 60}}{2} \right) \right) \\ 
+    &= \pi\arcsin\left( \sqrt{1 - \left( \frac{\sqrt{12\sqrt{28} - 60}}{2}\right)^2} \right) \\
+    &= \pi \arcsin \left( \sqrt{16 - 6\sqrt{7}} \right)
+\end{align*}
+
+We're just about finished, we just have to represent $\sqrt{16 - 6\sqrt{7}}$ as $x - \sqrt{y}$ (based on the result we got using RIES),
+
+\begin{align*}
+    \sqrt{16 - 6\sqrt{7}} &= x - \sqrt{y} \\
+    16 - 6\sqrt{7} &= x^2 + y - 2x\sqrt{y} \\ 
+    \implies x = 3, y = 7 &\implies \sqrt{16 - 6\sqrt{7}} = 3 - \sqrt{7}
+\end{align*}
+
+So, finally,
+
+$$
+\boxed{\int_{-1}^{1}{\frac{\arcsin{x} + 1}{x\sqrt{1-x^4}} \ln\left( \frac{(x^2 + 1)^{3/2} + x^3}{(x^2 + 1)^{3/2} - x^3} \right)dx} = \pi\arcsin\left(3 - \sqrt{7}\right)}
+$$
+
+\end{document}
