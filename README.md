@@ -16,6 +16,5 @@ $$
 
 # TODO
 
-- Add more integrals
 - Add coloring to make proofs clearer
 - Add graphs/diagrams
