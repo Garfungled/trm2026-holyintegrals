@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1774981283.36216 "/Users/garf/VScode/LaTeX/trm2026-holyintegrals/main.tex" "main.pdf" "main" 1774981284.65763 0
-  "/Users/garf/VScode/LaTeX/trm2026-holyintegrals/main.tex" 1774981281.65262 24058 0d4fc1468e25763f45ac2d96a0ac3f3c ""
+["pdflatex"] 1774981903.03551 "/Users/garf/VScode/LaTeX/trm2026-holyintegrals/main.tex" "main.pdf" "main" 1774981904.55903 0
+  "/Users/garf/VScode/LaTeX/trm2026-holyintegrals/main.tex" 1774981902.72027 24176 4d6cb8b06791b8b754064dc606130be6 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy5.tfm" 1246382020 1120 1e8878807317373affa7f7bba4cf2f6a ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy6.tfm" 1246382020 1124 14ccf5552bc7f77ca02a8a402bea8bfb ""
@@ -302,9 +302,9 @@
   "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1718577847.69345 5467645 128b85b7cde5f5edc5cb7f1dd7ff8736 ""
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1718577838 8221425 bc22963ed6f3e0dc22b24992b901ccfb ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
-  "main.aux" 1774981284.5363 762 4fb0b640ccc4476122a0d9f38fdd3b03 "pdflatex"
-  "main.out" 1774981284.53699 570 5dc4f92e8c568ed2d82b29ab08c965e1 "pdflatex"
-  "main.tex" 1774981281.65262 24058 0d4fc1468e25763f45ac2d96a0ac3f3c ""
+  "main.aux" 1774981904.41714 762 4fb0b640ccc4476122a0d9f38fdd3b03 "pdflatex"
+  "main.out" 1774981904.41774 570 5dc4f92e8c568ed2d82b29ab08c965e1 "pdflatex"
+  "main.tex" 1774981902.72027 24176 4d6cb8b06791b8b754064dc606130be6 ""
   (generated)
   "main.aux"
   "main.log"

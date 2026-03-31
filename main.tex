@@ -65,7 +65,7 @@
 
 \section*{Introduction}
 
-This essay is devoted toward some of my favorite integral problems I've come across in the past (through books, forums, or self discovery). I not only want to document them here but also provide some detailed insight and understanding behind each integral (not just their solutions). There's a few initial steps that we'll frequently use on every integral. We'll always start by plugging them directly into a calculator, I typically start with \href{https://www.integral-calculator.com/}{Integral-Calculator} and or \href{https://www.wolframalpha.com/}{WolframAlpha}. We'll also use an Inverse Symbolic Calculator (specifically RIES) to try and find a closed form solution using the numerical value of the integral. Also, feel free to try these integrals yourself before reading!
+This essay is devoted toward some of my favorite integral problems I've come across in the past (through books, forums, etc). I not only want to document them here but also provide some detailed insight and understanding behind each integral (not just their solutions). There's a few initial steps that we'll frequently use on every integral. We'll always start by plugging them directly into a calculator, I typically start with \href{https://www.integral-calculator.com/}{Integral-Calculator} and or \href{https://www.wolframalpha.com/}{WolframAlpha}. We'll also use an Inverse Symbolic Calculator (specifically RIES) to try and find a closed form solution using the numerical value of the integral. Also, feel free to try these integrals yourself before reading!
 
 \section{$I_{0}$: Michael}
 $$I_{0} = \int_{1}^{\sqrt{2}}{\frac{\arctan{\sqrt{2 - x^2}}}{1+x^2}dx}$$
@@ -99,12 +99,12 @@ Now that we've got the integral under nicer bounds, let's properly evaluate it.
 
 \subsection{Feynman's technique}
 
-Sometimes referred to as \textit{Differentiation Under the Integral Sign}, this particular technique uses the fact that given some function $F(t) = \int_{a}^{b}{f(t, x)dx}$,
+Sometimes referred to as \textit{Differentiation Under the Integral Sign}, this particular technique takes an integral $\int_{a}^{b}{f(x)dx}$ and adds an extra parameter making the integral itself a function: $F(t) = \int_{a}^{b}{f(t, x)dx}$. We can then differentiate with respect to this new parameter,
 $$
 F^\prime(t) = \frac{\partial}{\partial t}\int_{a}^{b}{f(t, x)dx} = \int_{a}^{b} \left( \frac{\partial}{\partial t} f(t, x)\right)dx.
 $$
 
-Note: $\partial / \partial t$ denotes the deriative operator for multivariate functions.
+Note: $\partial / \partial t$ denotes the deriative operator for multivariate functions. 
 \\\\
 We'll often use this technique if we have some idea in our mind such as \textit{"what if there wasn't this here"} or \textit{"what if there was a function there"}. In this case, I'd like to get rid of the $\arctan$ in our expression. Looking at a few different parameterizations, $\arctan(t \sqrt{2-x^2})$ and $\arctan(\sqrt{2-tx^2})$ do the job, though the former reduces nicer so that's the one we'll go with.
 
