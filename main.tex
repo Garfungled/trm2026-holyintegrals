@@ -29,8 +29,8 @@
 \usepackage{pgfplots}
 \usepgfplotslibrary{fillbetween}    
 \pgfplotsset{compat=1.8, width=10cm}
-\usetikzlibrary{backgrounds,
-                hobby}
+\usetikzlibrary{backgrounds,hobby, graphs, tikzmark, positioning}
+
 
 \addtolength{\cftsecnumwidth}{10pt}
 \setlength{\cftsubsecnumwidth}{30pt}
@@ -74,7 +74,7 @@ Using all the previously mentioned methods we've arrived at nothing (this is goo
 $$
 \frac{(\arctan{1})^2}{6} = \frac{\left( \frac{\pi}{4} \right)^2}{6} = \frac{\pi^2}{96}
 $$
-as an exact match. Occasionally, this process will allow us to possibly contemplate our next steps in solving. 
+as an exact match. Interestingly, the integral could be make equal to the area squared of a circle with radius $2\sqrt[4]{6}$. Occasionally, this process will allow us to possibly contemplate our next steps in solving. However, in this case, there isn't much motivation.
 
 We can break up the integral by noticing $\arctan{\sqrt{2-x^2}} = \int_{0}^{\sqrt{2-x^2}}{\frac{1}{1+y^2}}dy$ as well as switching the order of integration while respecting the bounds to set up an interesting step,
 \begin{align*}
@@ -99,13 +99,32 @@ Now that we've got the integral under nicer bounds, let's properly evaluate it.
 
 \subsection{Feynman's technique}
 
-Sometimes referred to as \textit{Differentiation Under the Integral Sign}, this particular technique takes an integral $\int_{a}^{b}{f(x)dx}$ and adds an extra parameter making the integral itself a function: $F(t) = \int_{a}^{b}{f(t, x)dx}$. We can then differentiate with respect to this new parameter,
+Sometimes referred to as \textit{Differentiation Under the Integral Sign}, this particular technique takes an integral $\int_{a}^{b}{f(x)dx}$ and adds an extra parameter making the integral itself a function: $F(t) = \int_{a}^{b}{f(t, x)dx}$. We can then differentiate with respect to this new parameter (Note: $\partial / \partial t$ denotes the deriative operator for multivariate functions),
 $$
 F^\prime(t) = \frac{\partial}{\partial t}\int_{a}^{b}{f(t, x)dx} = \int_{a}^{b} \left( \frac{\partial}{\partial t} f(t, x)\right)dx.
 $$
 
-Note: $\partial / \partial t$ denotes the deriative operator for multivariate functions. 
-\\\\
+If we consider the following to be the typical path for a definite integral,
+\begin{center}
+    \scalebox{1.2}{
+        \tikz \graph [grow right sep]{
+            x1/$\displaystyle \int_a^b{f(x)dx}$ -> x2 [as=$C_0$, red]
+        };
+    }
+\end{center}
+
+Then, the path taken via Feynmans technique is,
+\begin{center}
+        \scalebox{1.2}{
+            \tikz \graph [grow right sep]{
+                x1 [as =$\displaystyle \int_a^b{f(x)dx}$] -> {x2[as=$C_0$, red, xshift=65mm], x3[as=$F(t)$] -> x4[as=$F^\prime(t)$] -> x5[as=$\displaystyle \int{F^\prime(t)dt}$] -> x6[as=$C(t) + C_{1}$, red]};
+                x6 -> x2;
+            };
+        }
+\end{center}
+
+When evaluated at $t$, $C(t) + C_{1} = C_0$ (there will require some extra work to find $C_{1}$, which will most often be $0$).
+\\
 We'll often use this technique if we have some idea in our mind such as \textit{"what if there wasn't this here"} or \textit{"what if there was a function there"}. In this case, I'd like to get rid of the $\arctan$ in our expression. Looking at a few different parameterizations, $\arctan(t \sqrt{2-x^2})$ and $\arctan(\sqrt{2-tx^2})$ do the job, though the former reduces nicer so that's the one we'll go with.
 
 So, using $F(t) = \int_{0}^{\sqrt{2}}{\frac{\arctan{(t\sqrt{2 - x^2})}}{1 + x^2}dx}$,
@@ -151,6 +170,17 @@ Our original integral occurs when $t = 1$, or, $F(1)$.
     F(1) &= \int_{0}^{\sqrt{2}}{\frac{\arctan{(\sqrt{2 - x^2})}}{1 + x^2}dx} \\
     &= \frac{\pi}{4}\arctan{\left( \frac{(\sqrt{6 + 3} - 1)}{\sqrt{3} + \sqrt{2 + 1}} \right)} = \frac{\pi}{4} \cdot \frac{\pi}{3} = \frac{\pi^2}{12}\\
 \end{align*}
+
+Following our Feynman diagram from before, this is the path we've followed:
+
+\begin{center}
+        \scalebox{1.1}{
+            \tikz \graph [grow right sep]{
+                x1 [as =$\int_{0}^{\sqrt{2}}{\frac{\arctan{(\sqrt{2 - x^2})}}{1 + x^2}dx}$] -> {x2[as=$\frac{\pi^2}{12}$, red, xshift=65mm], x3[as=$\int_{0}^{\sqrt{2}}{\frac{\arctan{(t\sqrt{2 - x^2})}}{1 + x^2}dx}$, xshift=-50mm] -> x4[as=$\int_{0}^{\sqrt{2}}{\frac{\sqrt{2-x^2}}{(x^2 + 1)((2-x^2)t^2 + 1)}dx}$, xshift=-50mm] -> x5[as=$\frac{\pi(\sqrt{6t^2 +3} - 1)}{2\sqrt{2t^2 + 1}(3t^2 + 1)}$, xshift=-50mm] -> x6[as=$\frac{\pi}{4}\arctan{\left( \frac{t(\sqrt{6t^2 + 3} - 1)}{t^2\sqrt{3} + \sqrt{2t^2 + 1}} \right)} + C$, red, xshift=-50mm]};
+                x6 -> x2;
+            };
+        }
+\end{center}
 
 Substituting this value into our original yields, 
 

@@ -469,6 +469,12 @@ INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/hobby/hobby.code.tex
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/hobby/hobby.code.tex
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/hobby/pml3array.sty
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/hobby/pml3array.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/graphs/tikzlibrarygraphs.code.tex
+INPUT /usr/local/texlive/2024/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/graphs/tikzlibrarygraphs.code.tex
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/tikzmark/tikzlibrarytikzmark.code.tex
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/tikzmark/tikzlibrarytikzmark.code.tex
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/l3packages/l3keys2e/l3keys2e.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/l3packages/l3keys2e/l3keys2e.sty
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/titlesec/titletoc.sty
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/titlesec/titletoc.sty
 INPUT ./main.aux
