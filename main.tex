@@ -24,12 +24,15 @@
 \usepackage{tocloft}
 \usepackage{hyperref}
 \usepackage{tikz}
-\usepackage{amsmath,mleftright}
+\usepackage{amsmath,mleftright,amssymb}
 \usepackage{xparse}
 \usepackage{pgfplots}
+\usepackage{quiver}
+\usepackage{pgffor}
 \usepgfplotslibrary{fillbetween}    
 \pgfplotsset{compat=1.8, width=10cm}
-\usetikzlibrary{backgrounds,hobby, graphs, tikzmark, positioning}
+\usetikzlibrary{hobby,graphs,tikzmark,patterns,arrows.meta,decorations.pathreplacing,calc,positioning,shapes.geometric,backgrounds}
+\pgfplotsset{compat=1.18}
 
 
 \addtolength{\cftsecnumwidth}{10pt}
@@ -55,6 +58,10 @@
   {}% <numberless-entry-format>
   {\bfseries\hfill\contentspage}% <filler-page-format>
 
+\definecolor{tA}{RGB}{0,100,180}
+\definecolor{tB}{RGB}{160,50,140}
+\definecolor{tC}{RGB}{200,100,20}
+
 \title{Holy Integrals}
 \author{Zachary Medjamia}
 \date{2026}
@@ -70,16 +77,132 @@ This essay is devoted toward some of my favorite integral problems I've come acr
 \section{$I_{0}$: Michael}
 $$I_{0} = \int_{1}^{\sqrt{2}}{\frac{\arctan{\sqrt{2 - x^2}}}{1+x^2}dx}$$
 
+\begin{center}
+    \begin{tikzpicture}
+    \begin{axis}[
+        at={(0,0)},
+        width=9cm, height=7cm,
+        xmin=0, xmax=1.55,
+        ymin=0, ymax=1,
+        xlabel={$x$},
+        ylabel={$y$},
+        axis lines=middle,
+        xlabel style={at={(rel axis cs:1,0)}, anchor=west},
+        ylabel style={at={(rel axis cs:0,1)}, anchor=south},
+        xtick={0, 0.5, 1, 1.414},
+        xticklabels={$0$, $0.5$, $1$, $\sqrt{2}$},
+        ytick={0.2, 0.4, 0.6, 0.8, 1.0},
+        grid=major,
+        grid style={gray!30},
+        samples=80,
+        domain=0:1.4142,
+        every axis plot/.append style={thick},
+    ]
+    % Shaded area
+    \addplot[fill=blue!15, draw=none, domain=1:1.4142] {rad(atan(sqrt(2-x^2)))/(1+x^2)} \closedcycle;
+    % Curve
+    \addplot[blue!70!black, very thick, domain=0:1.4142] {rad(atan(sqrt(2-x^2)))/(1+x^2)};
+
+    \addplot[only marks, mark=*, mark size=2.5pt, blue!70!black] coordinates {(1, 0.3927) (1.4142, 0)};
+
+    \node[blue!70!black, font=\small] at (axis cs:1.15, 0.12) {$I_0$};
+    \end{axis}
+    \end{tikzpicture}
+\end{center}
+
 Using all the previously mentioned methods we've arrived at nothing (this is good!). Using the approximation numerical value of the integral: $0.1028083791780...$ (for the sake of intrigue I'll be using 100 digits), the RIES program returns
 $$
 \frac{(\arctan{1})^2}{6} = \frac{\left( \frac{\pi}{4} \right)^2}{6} = \frac{\pi^2}{96}
 $$
-as an exact match. Interestingly, the integral could be make equal to the area squared of a circle with radius $2\sqrt[4]{6}$. Occasionally, this process will allow us to possibly contemplate our next steps in solving. However, in this case, there isn't much motivation.
+as an exact match. Interestingly, the integral could be made equal to the area squared of a circle with radius $2\sqrt[4]{6}$. Occasionally, this process will allow us to possibly contemplate our next steps in solving. However, in this case, there isn't much motivation.
 
 We can break up the integral by noticing $\arctan{\sqrt{2-x^2}} = \int_{0}^{\sqrt{2-x^2}}{\frac{1}{1+y^2}}dy$ as well as switching the order of integration while respecting the bounds to set up an interesting step,
 \begin{align*}
 \int_{1}^{\sqrt{2}}{\frac{\arctan{\sqrt{2 - x^2}}}{1+x^2}dx} &= \int_{1}^{\sqrt{2}}{\int_{0}^{\sqrt{2-x^2}}{\frac{1}{(1+x^2)(1+y^2)}dy}dx}\\ &= \int_{0}^{1}{\int_{1}^{\sqrt{2-y^2}}{\frac{1}{(1+x^2)(1+y^2)}dx}dy}
 \end{align*}
+
+The bounds makes more sense with a diagram
+
+\begin{center}
+    \begin{tikzpicture}
+\begin{scope}[shift={(0.2,0.8)}]
+\node[font=\bfseries, blue!70!black] at (2.2,5.3) {$dy\,dx$ order};
+
+\draw[-Stealth, thick] (-0.3,0) -- (4,0) node[right] {$x$};
+\draw[-Stealth, thick] (0,-0.3) -- (0,4) node[above] {$y$};
+
+\begin{scope}
+\clip (2,0) rectangle (2.828, 3);
+\fill[blue!20] plot[domain=2:2.828, samples=60, variable=\x] ({\x},{sqrt(8-\x*\x)}) -- (2.828,0) -- (2,0) -- cycle;
+\end{scope}
+
+\draw[red!70!black, very thick, domain=2:2.828, samples=60] plot ({\x},{sqrt(8-\x*\x)});
+
+\draw[blue!70!black, thick] (2,0) -- (2, 2) node[midway, left, font=\small] {$x\!=\!1$};
+\draw[blue!70!black, thick, dashed] (2.828,0) -- (2.828, 0.3);
+
+\foreach \val/\lab in {2/$1$, 2.828/$\sqrt{2}$} {
+    \draw (\val, -0.1) -- (\val, 0.1);
+    \node[below, font=\small] at (\val, -0.15) {\lab};
+}
+\node[below, font=\small] at (0, -0.15) {$0$};
+\node[left, font=\small] at (-0.1, 2) {$1$};
+\draw (-0.1,2) -- (0.1,2);
+
+\draw[-Stealth, orange!80!black, thick] (3.2, 0.15) -- (3.2, 1.62);
+\node[right, orange!80!black, font=\footnotesize] at (3.2, 0.9) {$dy$};
+
+\draw[Stealth-Stealth, green!50!black, thick] (2, -0.6) -- (2.828, -0.6);
+\node[below, green!50!black, font=\footnotesize] at (2.414, -0.65) {$dx$};
+
+\node[red!70!black, font=\small, above right] at (2.1, 1.95) {$y=\sqrt{2-x^2}$};
+
+\node[font=\small, text width=4.5cm, align=center] at (2.2, -1.8) {
+$\displaystyle\int_1^{\sqrt{2}}\!\int_0^{\sqrt{2-x^2}}\!\frac{dy\,dx}{(1+x^2)(1+y^2)}$
+};
+\end{scope}
+
+\node[font=\Huge] at (6.3, 2.2) {$\Longrightarrow$};
+\node[font=\small\itshape, text width=1.8cm, align=center] at (6.3, 1.4) {swap\\order};
+
+\begin{scope}[shift={(7.5,0.8)}]
+\node[font=\bfseries, red!70!black] at (2.2,5.3) {$dx\,dy$ order};
+
+\draw[-Stealth, thick] (-0.3,0) -- (4,0) node[right] {$x$};
+\draw[-Stealth, thick] (0,-0.3) -- (0,4) node[above] {$y$};
+
+\begin{scope}
+\clip (2,0) rectangle (3, 2.1);
+\fill[red!15] (2,0) -- (2,2) -- plot[domain=2:0, samples=60, variable=\y] ({sqrt(8-\y*\y)},{\y}) -- (2.828, 0) -- cycle;
+\end{scope}
+
+\draw[red!70!black, very thick, domain=0:2, samples=60] plot ({sqrt(8-\x*\x)},{\x});
+
+\draw[blue!70!black, thick] (2,0) -- (2, 2) node[midway, left, font=\small] {$x\!=\!1$};
+\draw[blue!70!black, thick] (2, 2) -- (2.828, 2);
+\draw[blue!70!black, thick, dashed] (2,2) -- (0,2);
+
+\foreach \val/\lab in {2/$1$, 2.828/$\sqrt{2}$} {
+    \draw (\val, -0.1) -- (\val, 0.1);
+    \node[below, font=\small] at (\val, -0.15) {\lab};
+}
+\node[below, font=\small] at (0, -0.15) {$0$};
+\node[left, font=\small] at (-0.1, 2) {$1$};
+\draw (-0.1,2) -- (0.1,2);
+
+\draw[-Stealth, green!50!black, thick] (2.15, -.2) -- (2.55, -.2);
+\node[above, green!50!black, font=\footnotesize] at (2.35, -.6) {$dx$};
+
+\draw[Stealth-Stealth, orange!80!black, thick] (3.2, 0) -- (3.2, 2);
+\node[right, orange!80!black, font=\footnotesize] at (3.25, 1) {$dy$};
+\node[red!70!black, font=\small, right] at (2.6, 2.2) {$x=\sqrt{2-y^2}$};
+\node[font=\small, text width=4.5cm, align=center] at (2.2, -1.8) {
+$\displaystyle\int_0^{1}\!\int_1^{\sqrt{2-y^2}}\!\frac{dx\,dy}{(1+x^2)(1+y^2)}$
+};
+\end{scope}
+    \end{tikzpicture}
+\end{center}
+
 
 Evaluating with respect to $x$ first,
 \begin{align*}
@@ -114,20 +237,78 @@ If we consider the following to be the typical path for a definite integral,
 \end{center}
 
 Then, the path taken via Feynmans technique is,
-\begin{center}
-        \scalebox{1.2}{
-            \tikz \graph [grow right sep]{
-                x1 [as =$\displaystyle \int_a^b{f(x)dx}$] -> {x2[as=$C_0$, red, xshift=65mm], x3[as=$F(t)$] -> x4[as=$F^\prime(t)$] -> x5[as=$\displaystyle \int{F^\prime(t)dt}$] -> x6[as=$C(t) + C_{1}$, red]};
-                x6 -> x2;
-            };
-        }
-\end{center}
+\[\begin{tikzcd}[row sep=.3cm,column sep=.3cm]
+    {\displaystyle\int_a^b{f(x)dx}} &&&&& {\textcolor{red}{C_0}}\\
+    & {F(t)} & {F'(t)} & {\displaystyle\int F'(t)dt} & {\textcolor{red}{C(t)+C_1}}
+    \arrow["=", from=1-1, to=1-6]
+    \arrow["\text{Parametrize}",curve={height=12pt}, from=1-1, to=2-2]
+    \arrow["\frac{\partial}{\partial t}", from=2-2, to=2-3]
+    \arrow["\int dt", from=2-3, to=2-4]
+    \arrow["=", from=2-4, to=2-5]
+     \arrow["\text{Evaluate at } t", curve={height=12pt},from=2-5, to=1-6]
+\end{tikzcd}\]
 
 When evaluated at $t$, $C(t) + C_{1} = C_0$ (there will require some extra work to find $C_{1}$, which will most often be $0$).
 \\
-We'll often use this technique if we have some idea in our mind such as \textit{"what if there wasn't this here"} or \textit{"what if there was a function there"}. In this case, I'd like to get rid of the $\arctan$ in our expression. Looking at a few different parameterizations, $\arctan(t \sqrt{2-x^2})$ and $\arctan(\sqrt{2-tx^2})$ do the job, though the former reduces nicer so that's the one we'll go with.
+We'll often use this technique if we have some idea in our mind such as \textit{"what if there wasn't this here"} or \textit{"what if there was a function there"}. In this case, I'd like to get rid of the $\arctan$ in our expression. Looking at a few different parameterizations, $\arctan(t \sqrt{2-x^2})$ and $\arctan(\sqrt{2-tx^2})$ do the job, though the former reduces nicer so that's the one we'll go with. Our integral now looks like 
+$$F(t) = \int_{0}^{\sqrt{2}}{\frac{\arctan{(t\sqrt{2 - x^2})}}{1 + x^2}dx}$$.
 
-So, using $F(t) = \int_{0}^{\sqrt{2}}{\frac{\arctan{(t\sqrt{2 - x^2})}}{1 + x^2}dx}$,
+Graphically, the function being integrated and and shaded regions with representing the value of the integral at various values of $t$,
+
+\begin{center}
+    \begin{tikzpicture}[declare function={f(\x,\y)=rad(atan(\y*sqrt(2-\x*\x)))/(1+\x*\x);}]
+        \begin{scope}[shift={(7,0)}]
+            \begin{axis}[
+            axis lines = center,
+            axis on top,
+            view={60}{20},
+            xlabel={$x$}, ylabel={$t$}, zlabel={},
+            xmin=-2, xmax=2, ymin=-2, ymax=2,
+            zmin=-2, zmax=2,
+            tick label style={font=\tiny}
+        ]
+        \addplot3[
+            surf, shader=faceted interp, faceted color=black!60, opacity=0.85,
+            samples=30, samples y=41,
+            domain=-1.4:1.4, domain y=-2:2,
+        ] {f(\x,\y)};
+
+    %     \addplot3[
+    % ,domain    = -1.4:1.4
+    % ,samples   = 30
+    % ,samples y = 1
+    % ] ( {x}, {1}, {rad(atan(sqrt(2-x*x)))/(1+x*x)} );
+
+    \pgfplotsinvokeforeach{-2, -1.75,-1.5,-1.25,-1,-0.75,-0.5,-0.25,0,0.25,0.5,0.75,1,1.25,1.5,1.75,2}{\fill[black, opacity=0.8] (0,#1,0) -- plot[variable=\x,domain=0:1.4] (\x,#1,{f(\x,#1)}) -- (1.41,#1,0) --cycle;}
+        \end{axis}
+        \end{scope}
+        \begin{scope}
+            \begin{axis}[
+            axis lines = center,
+            axis on top,
+            view={60}{20},
+            xlabel={$x$}, ylabel={$t$}, zlabel={},
+            xmin=-2, xmax=2, ymin=-2, ymax=2,
+            zmin=-2, zmax=2,
+            tick label style={font=\tiny}
+        ]
+        \addplot3[
+            surf, shader=faceted interp, faceted color=black!60, opacity=0.85,
+            samples=30, samples y=41,
+            domain=-1.4:1.4, domain y=-2:2,
+        ] {f(\x,\y)};
+
+        \addplot3[
+    ,domain    = -1.4:1.4
+    ,samples   = 30
+    ,samples y = 1
+    ] ( {x}, {1}, {rad(atan(sqrt(2-x*x)))/(1+x*x)} );
+        \end{axis}
+        \end{scope}
+    \end{tikzpicture}
+\end{center}
+
+Continuing with the technique,
 
 \begin{align*}
     F^\prime(t) &= \frac{\partial}{\partial t}\int_{0}^{\sqrt{2}}{\frac{\arctan{(t\sqrt{2 - x^2})}}{1 + x^2}dx} \\ 
@@ -156,19 +337,19 @@ Choosing $t = \frac{\tan u}{\sqrt{2}} \implies dt = \frac{\sec^2{u}}{\sqrt{2}}du
     \frac{\pi}{2}\int{\frac{\sqrt{6t^2 +3} - 1}{\sqrt{2t^2 + 1}(3t^2 + 1)}dt} &= \frac{\pi}{2}\int{\frac{\sqrt{6\left(\frac{\tan u}{\sqrt{2}}\right)^2 +3} - 1}{\sqrt{2\left(\frac{\tan u}{\sqrt{2}}\right)^2 + 1}\left(3\left(\frac{\tan u}{\sqrt{2}}\right)^2 + 1\right)}\frac{\sec^2{u}}{\sqrt{2}}du} \\ 
     &= \frac{\pi}{2} \int{\frac{\sec{u} (\sqrt{3}\sec{u} - 1)}{3\tan^2{u} + 2}du} \\
     &= \frac{\pi}{2}\left( \arctan{\left(\frac{\sqrt{3}\tan{u}}{\sqrt{2}}\right) - \arctan{\left( \frac{\sin{u}}{\sqrt{2}} \right)}} \right) + C \\ 
-    &= \frac{\pi}{4}\arctan{\left( \frac{t(\sqrt{6t^2 + 3} - 1)}{t^2\sqrt{3} + \sqrt{2t^2 + 1}} \right)} + C
+    &= \frac{\pi}{2}\arctan{\left( \frac{t(\sqrt{6t^2 + 3} - 1)}{t^2\sqrt{3} + \sqrt{2t^2 + 1}} \right)} + C
 \end{align*}
 
 Now, we have our intergral (since the integral is $0$ when $t = 0$ then $F(0) = 0 \implies C = 0$),
 $$
-F(t) = \int_{0}^{\sqrt{2}}{\frac{\arctan{(t\sqrt{2 - x^2})}}{1 + x^2}dx} = \frac{\pi}{4}\arctan{\left( \frac{t(\sqrt{6t^2 + 3} - 1)}{t^2\sqrt{3} + \sqrt{2t^2 + 1}} \right)}.
+F(t) = \int_{0}^{\sqrt{2}}{\frac{\arctan{(t\sqrt{2 - x^2})}}{1 + x^2}dx} = \frac{\pi}{2}\arctan{\left( \frac{t(\sqrt{6t^2 + 3} - 1)}{t^2\sqrt{3} + \sqrt{2t^2 + 1}} \right)}.
 $$
 
 Our original integral occurs when $t = 1$, or, $F(1)$. 
 
 \begin{align*}
     F(1) &= \int_{0}^{\sqrt{2}}{\frac{\arctan{(\sqrt{2 - x^2})}}{1 + x^2}dx} \\
-    &= \frac{\pi}{4}\arctan{\left( \frac{(\sqrt{6 + 3} - 1)}{\sqrt{3} + \sqrt{2 + 1}} \right)} = \frac{\pi}{4} \cdot \frac{\pi}{3} = \frac{\pi^2}{12}\\
+    &= \frac{\pi}{2}\arctan{\left( \frac{(\sqrt{6 + 3} - 1)}{\sqrt{3} + \sqrt{2 + 1}} \right)} = \frac{\pi^2}{12}\\
 \end{align*}
 
 Following our Feynman diagram from before, this is the path we've followed:
@@ -176,7 +357,7 @@ Following our Feynman diagram from before, this is the path we've followed:
 \begin{center}
         \scalebox{1.1}{
             \tikz \graph [grow right sep]{
-                x1 [as =$\int_{0}^{\sqrt{2}}{\frac{\arctan{(\sqrt{2 - x^2})}}{1 + x^2}dx}$] -> {x2[as=$\frac{\pi^2}{12}$, red, xshift=65mm], x3[as=$\int_{0}^{\sqrt{2}}{\frac{\arctan{(t\sqrt{2 - x^2})}}{1 + x^2}dx}$, xshift=-50mm] -> x4[as=$\int_{0}^{\sqrt{2}}{\frac{\sqrt{2-x^2}}{(x^2 + 1)((2-x^2)t^2 + 1)}dx}$, xshift=-50mm] -> x5[as=$\frac{\pi(\sqrt{6t^2 +3} - 1)}{2\sqrt{2t^2 + 1}(3t^2 + 1)}$, xshift=-50mm] -> x6[as=$\frac{\pi}{4}\arctan{\left( \frac{t(\sqrt{6t^2 + 3} - 1)}{t^2\sqrt{3} + \sqrt{2t^2 + 1}} \right)} + C$, red, xshift=-50mm]};
+                x1 [as =$\int_{0}^{\sqrt{2}}{\frac{\arctan{(\sqrt{2 - x^2})}}{1 + x^2}dx}$] -> {x2[as=$\frac{\pi^2}{12}$, red, xshift=65mm], x3[as=$\int_{0}^{\sqrt{2}}{\frac{\arctan{(t\sqrt{2 - x^2})}}{1 + x^2}dx}$, xshift=-50mm] -> x4[as=$\int_{0}^{\sqrt{2}}{\frac{\sqrt{2-x^2}}{(x^2 + 1)((2-x^2)t^2 + 1)}dx}$, xshift=-50mm] -> x5[as=$\frac{\pi(\sqrt{6t^2 +3} - 1)}{2\sqrt{2t^2 + 1}(3t^2 + 1)}$, xshift=-50mm] -> x6[as=$\frac{\pi}{2}\arctan{\left( \frac{t(\sqrt{6t^2 + 3} - 1)}{t^2\sqrt{3} + \sqrt{2t^2 + 1}} \right)} + C$, red, xshift=-50mm]};
                 x6 -> x2;
             };
         }
@@ -197,6 +378,40 @@ $$\boxed{\int_{1}^{\sqrt{2}}{\frac{\arctan{\sqrt{2 - x^2}}}{1+x^2}dx} = \frac{\p
 $$
 I_{1} = \int_{0}^{\infty}{\frac{\arctan^2{x}}{x^2 + 9}dx}
 $$
+
+\begin{center}
+    \begin{tikzpicture}
+
+    \begin{axis}[
+        width=10cm, height=7cm,
+        xmin=0, xmax=30,
+        ymin=0, ymax=0.28,
+        xlabel={$x$},
+        ylabel={$y$},
+        axis lines=middle,
+        xlabel style={at={(rel axis cs:1,0)}, anchor=west},
+        ylabel style={at={(rel axis cs:0,1)}, anchor=south},
+        xtick={0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30},
+        ytick={0.05,0.10,0.15,0.20,0.25},
+        grid=major,
+        grid style={gray!30},
+        samples=120,
+        domain=0:12,
+        every axis plot/.append style={thick},
+    ]
+    % Shaded area
+    \addplot[fill=blue!15, draw=none, domain=0:30] {(rad(atan(x)))^2/(x*x+9)} \closedcycle;
+    % Curve
+    \addplot[blue!70!black, very thick, domain=0:30] {(rad(atan(x)))^2/(x*x+9)};
+    % Label
+    \node[blue!70!black, font=\small] at (axis cs:6, 0.06) {$\displaystyle I_1$};
+    % Fade arrow suggesting tail to infinity
+    \draw[->, thick, gray, dashed] (axis cs:30, 0.023) -- (axis cs:31, 0.019);
+    \node[gray, font=\scriptsize] at (axis cs:28, 0.028) {$\Rightarrow\infty$};
+    \end{axis}
+
+    \end{tikzpicture}
+\end{center}
 
 All methods were unsuccessful, including RIES with the approximation $0.7355031...$ with 100 digits of percision and $80033943411216$ expression searched. So, we'll get right to the evaluation.
 
@@ -233,22 +448,78 @@ $$
 
 Which would make $A = t$. Continuing with the decomposition,
 
-\begin{align*}
-    \frac{x^2}{(x^2 + A^2)(x^2 + B^2)(x^2 + C^2)} = &-\frac{A^2}{(A^2 - B^2)(A^2 - C^2)(A^2 + x^2)} \\&+ \frac{B^2}{(A^2 - B^2)(B^2 - C^2)(B^2 + x^2)} \\&+ \frac{C^2}{(A^2 - C^2)(C^2 - B^2)(C^2 + x^2)}
-\end{align*}
+\begin{tikzpicture}
+    \node[anchor=west] at (0, 10) {%
+$\displaystyle
+\frac{x^2}{(x^2+\textcolor{tA}{A^2})(x^2+\textcolor{tB}{B^2})(x^2+\textcolor{tC}{C^2})}
+\;=\;
+-\,\frac{\textcolor{tA}{A^2}}{(\textcolor{tA}{A^2}\!-\!\textcolor{tB}{B^2})(\textcolor{tA}{A^2}\!-\!\textcolor{tC}{C^2})}
+\cdot\frac{1}{\textcolor{tA}{A^2}\!+\!x^2}
+$};
+
+    \node[anchor=west] at (5.2, 9.0) {%
+    $\displaystyle
+    +\;\frac{\textcolor{tB}{B^2}}{(\textcolor{tB}{B^2}\!-\!\textcolor{tA}{A^2})(\textcolor{tB}{B^2}\!-\!\textcolor{tC}{C^2})}
+    \cdot\frac{1}{\textcolor{tB}{B^2}\!+\!x^2}
+    $};
+
+    \node[anchor=west] at (5.2, 8.0) {%
+    $\displaystyle
+    +\;\frac{\textcolor{tC}{C^2}}{(\textcolor{tC}{C^2}\!-\!\textcolor{tA}{A^2})(\textcolor{tC}{C^2}\!-\!\textcolor{tB}{B^2})}
+    \cdot\frac{1}{\textcolor{tC}{C^2}\!+\!x^2}
+    $};
+\end{tikzpicture}
 
 Which makes the integral,
 
-\begin{align*}
-    \int_{0}^{\infty}{\frac{x^2}{(t^2+x^2)(1+y^2x^2)(1+z^2x^2)}} = B^2 C^2\Bigg( \Bigg. &-\frac{A^2}{(A^2 - B^2)(A^2 - C^2)}\int_{0}^{\infty}{\frac{1}{(A^2 + x^2)}dx}\\& + \frac{B^2}{(A^2 - B^2)(B^2 - C^2)}\int_{0}^{\infty}{\frac{1}{(B^2 + x^2)}dx}\\ &+ \frac{C^2}{(A^2 - C^2)(C^2 - B^2)}\int_{0}^{\infty}{\frac{1}{(C^2 + x^2)}dx} \Bigg. \Bigg)
-\end{align*}
+\begin{tikzpicture}
+    \node[anchor=west] at (0, 5.5) {%
+$\displaystyle
+\int_0^\infty \frac{x^2\,dx}{(x^2\!+\!\textcolor{tA}{A^2})(x^2\!+\!\textcolor{tB}{B^2})(x^2\!+\!\textcolor{tC}{C^2})}
+\;=\;
+\textcolor{tB}{B^2}\textcolor{tC}{C^2}\!\left(\,
+-\frac{\textcolor{tA}{A^2}}{(\textcolor{tA}{A^2}\!-\!\textcolor{tB}{B^2})(\textcolor{tA}{A^2}\!-\!\textcolor{tC}{C^2})}
+\int_0^\infty\!\frac{dx}{\textcolor{tA}{A^2}\!+\!x^2}
+\right.
+$};
 
-For any $u \in \mathbb{R}$, $\int_{0}^{\infty}{\frac{1}{x^2 + u^2}dx} = \evalat*{\left( \frac{\arctan{x/u}}{u} \right)}{\infty}_{0} = \frac{\pi}{2u}$, so,
+    \node[anchor=west] at (6.7, 4.4) {%
+    $\displaystyle
+    +\;\frac{\textcolor{tB}{B^2}}{(\textcolor{tB}{B^2}\!-\!\textcolor{tA}{A^2})(\textcolor{tB}{B^2}\!-\!\textcolor{tC}{C^2})}
+    \int_0^\infty\!\frac{dx}{\textcolor{tB}{B^2}\!+\!x^2}
+    $};
 
-\begin{align*}
-    \int_{0}^{\infty}{\frac{x^2}{(t^2 + x^2)(1+y^2x^2)(1+z^2x^2)}} &= \frac{B^2 C^2\pi}{2(A + B)(B + C)(C + A)} \\ 
-    &= \frac{\pi}{2(1+ty)(1+tz)(y+z)}
-\end{align*}
+    \node[anchor=west] at (6.7, 3.4) {%
+    $\displaystyle
+    \left.
+    +\;\frac{\textcolor{tC}{C^2}}{(\textcolor{tC}{C^2}\!-\!\textcolor{tA}{A^2})(\textcolor{tC}{C^2}\!-\!\textcolor{tB}{B^2})}
+    \int_0^\infty\!\frac{dx}{\textcolor{tC}{C^2}\!+\!x^2}
+    \right)
+    $};
+\end{tikzpicture}
+
+For any $u \in \mathbb{R}$, $\displaystyle\int_{0}^{\infty}{\frac{1}{x^2 + u^2}dx} = \evalat*{\left( \frac{\arctan{x/u}}{u} \right)}{\infty}_{0} = \frac{\pi}{2u}$, so,
+
+\begin{tikzpicture}
+    \node[anchor=west] at (2, 0.5) {%
+$\displaystyle
+\int_0^\infty \frac{x^2\,dx}{(t^2+x^2)(1+y^2x^2)(1+z^2x^2)}
+\;=\;
+\frac{\textcolor{tB}{B^2}\textcolor{tC}{C^2}\pi}{2(\textcolor{tA}{A}+\textcolor{tB}{B})(\textcolor{tB}{B}+\textcolor{tC}{C})(\textcolor{tC}{C}+\textcolor{tA}{A})}
+$};
+
+    \node[anchor=west, font=\small, gray!60] at (12.5, 0.9) {%
+    $\textcolor{tA}{A}=t$};
+    \node[anchor=west, font=\small, gray!60] at (12.5, 0.5) {%
+    $\textcolor{tB}{B}=\tfrac{1}{y}$};
+    \node[anchor=west, font=\small, gray!60] at (12.5, 0.1) {%
+    $\textcolor{tC}{C}=\tfrac{1}{z}$};
+
+    \node[anchor=west] at (6.5, -0.8) {%
+    $\displaystyle
+    =\;\frac{\pi}{2(1+ty)(1+tz)(y+z)}
+    $};
+\end{tikzpicture}
 
 Substituting back into our original iterated integral ($z = \frac{1}{t}$ is removable),
 
@@ -345,6 +616,37 @@ So, we have
 $$
 \int_{-1}^{1}{\frac{\arcsin{x} + 1}{x\sqrt{1-x^4}} \ln\left( \frac{(x^2 + 1)^{3/2} + x^3}{(x^2 + 1)^{3/2} - x^3} \right)dx}
 $$
+
+\begin{center}
+    \begin{tikzpicture}
+
+    \begin{axis}[
+        width=10cm, height=7cm,
+        xmin=-1, xmax=1,
+        ymin=-1.5, ymax=2.0,
+        xlabel={$x$},
+        ylabel={$y$},
+        axis lines=middle,
+        xlabel style={at={(rel axis cs:1,0)}, anchor=west},
+        ylabel style={at={(rel axis cs:0,1)}, anchor=south},
+        grid=major,
+        grid style={gray!30},
+        samples=120,
+        domain=0:12,
+        every axis plot/.append style={thick},
+    ]
+    % Shaded area
+    \addplot[fill=blue!15, draw=none, domain=-.99:.99] {(rad(asin(x)) + 1)/(x*sqrt(1-x*x*x*x))*ln(((x*x+1)^(3/2) + x*x*x)/((x*x + 1)^(3/2) - x*x*x))} \closedcycle;
+    % Curve
+    \addplot[blue!70!black, very thick, domain=-.99:.99] {(rad(asin(x)) + 1)/(x*sqrt(1-x*x*x*x))*ln(((x*x+1)^(3/2) + x*x*x)/((x*x + 1)^(3/2) - x*x*x))};
+    % Label
+    \node[blue!70!black, font=\small] at (axis cs:.8, 0.5) {$\displaystyle I_2$};
+    % Fade arrow suggesting tail to infinity
+    \node[gray, font=\scriptsize] at (axis cs:.9,1.7) {$\Uparrow\infty$};
+    \node[gray, font=\scriptsize] at (axis cs:-.8,-1) {$\Downarrow-\infty$};
+    \end{axis}
+    \end{tikzpicture}
+\end{center}
 
 REIS yields $\pi\arcsin(3 - \sqrt{7})$ as an answer from the numerical value of $1.13760379218104...$ This will be good motivation later on. First let's break this into two integrals from the numerator being $\arcsin{x} + 1$,
 
