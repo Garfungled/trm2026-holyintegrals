@@ -1,5 +1,8 @@
 # Holy Integrals
 
+## **Update April 14, '26**
+It seems I've missed the date to upload the essay. A classic fuck up. I'm rather upset but I'm keeping it cool as I'm currently inside a class. I may or may not continue working on this essay.
+
 This is an essay on a few integrals that I find incredibly interesting. Currently the essay contains:
 
 $$
