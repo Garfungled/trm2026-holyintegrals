@@ -18,6 +18,7 @@ $$
 
 - Add coloring to make proofs clearer
 - Add graphs/diagrams
+- Fix Angel Names (LOL)
 
 ## **Update April 14, '26**
 It seems I've missed the date to upload the essay. A classic fuck up. I'm rather upset but I'm keeping it cool as I'm currently inside a class. I may or may not continue working on this essay.
